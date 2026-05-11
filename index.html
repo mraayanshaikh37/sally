@@ -3,244 +3,370 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>sally - your girlfriend</title>
-<style>
-  body {
-    margin: 0;
-    font-family: system-ui, Arial, sans-serif;
-    background: #0f172a;
-    color: #e5e7eb;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-  }
+  <title>Sally - Your Girlfriend</title>
 
-  .chat-container {
-    width: 95%;
-    max-width: 420px;
-    height: 90vh;
-    background: #020617;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.6);
-    overflow: hidden;
-  }
-
-  .chat-header {
-    padding: 14px;
-    text-align: center;
-    font-weight: 600;
-    background: #020617;
-    border-bottom: 1px solid #1e293b;
-  }
-
-  .messages {
-    flex: 1;
-    padding: 14px;
-    overflow-y: auto;
-  }
-
-  .message {
-    max-width: 82%;
-    padding: 10px 12px;
-    margin-bottom: 12px;
-    border-radius: 10px;
-    line-height: 1.4;
-    white-space: pre-wrap;
-    font-size: 14px;
-  }
-
-  .user {
-    background: #2563eb;
-    margin-left: auto;
-  }
-
-  .bot {
-    background: #1e293b;
-    margin-right: auto;
-  }
-
-  .input-area {
-    display: flex;
-    border-top: 1px solid #1e293b;
-  }
-
-  textarea {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  outline: none;
-  background: #020617;
-  color: #e5e7eb;
-  font-size: 14px;
-  resize: none;
-  height: 44px;
-}
-
-  button {
-    padding: 12px 16px;
-    border: none;
-    background: #22c55e;
-    color: #020617;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  button:hover {
-    background: #16a34a;
-  }
-
-  /* MOBILE MAGIC */
-  @media (max-width: 600px) {
-    .chat-container {
-      width: 100%;
-      height: 100vh;
-      max-width: none;
-      border-radius: 0;
+  <style>
+    * {
+      box-sizing: border-box;
     }
-  }
-</style>
+
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    .chat-container {
+      width: 95%;
+      max-width: 420px;
+      height: 90vh;
+      background: #020617;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+    }
+
+    .chat-header {
+      padding: 14px;
+      background: #020617;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 14px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      max-width: 82%;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      font-size: 14px;
+      word-wrap: break-word;
+    }
+
+    .user {
+      background: #2563eb;
+      margin-left: auto;
+    }
+
+    .bot {
+      background: #1e293b;
+      margin-right: auto;
+    }
+
+    .input-area {
+      display: flex;
+      border-top: 1px solid #1e293b;
+      background: #020617;
+    }
+
+    textarea {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      outline: none;
+      background: #020617;
+      color: #e5e7eb;
+      resize: none;
+      font-size: 14px;
+      min-height: 50px;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .send-btn {
+      padding: 12px 16px;
+      background: #22c55e;
+      color: #020617;
+    }
+
+    .send-btn:hover {
+      background: #16a34a;
+    }
+
+    .reset-btn {
+      padding: 7px 12px;
+      background: #ef4444;
+      color: white;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+
+    .reset-btn:hover {
+      background: #dc2626;
+    }
+
+    @media (max-width: 600px) {
+      .chat-container {
+        width: 100%;
+        height: 100vh;
+        max-width: none;
+        border-radius: 0;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-  <div class="chat-container">
-    <div class="chat-header">sally –your gf </div>
-    <div class="messages" id="messages"></div>
-    <div class="input-area">  
-     <textarea id="userInput" rows="1" placeholder="Share what you're feeling or facing…"></textarea>  
-     <button onclick="sendMessage()">Send</button>  
-  </div>
+<div class="chat-container">
+
+  <div class="chat-header">
+    <span>💛 Sally - your gf</span>
+    <button class="reset-btn" onclick="clearMemory()">Reset</button>
   </div>
 
-  <script>
-    const API_URL = "https://api.mistral.ai/v1/chat/completions";
-    const API_KEY = "QBAOi3QEWO5MmQm619QawrcAH9Zq7UkI";
+  <div class="messages" id="messages"></div>
 
-    const messagesDiv = document.getElementById("messages");
-    const userInput = document.getElementById("userInput");
+  <div class="input-area">
+    <textarea
+      id="userInput"
+      rows="1"
+      placeholder="Share what you're feeling or facing…"
+    ></textarea>
 
-    // Conversation memory with system prompt
-    const conversation = [
-      {
-        role: "system",
-        content: `
+    <button class="send-btn" onclick="sendMessage()">Send</button>
+  </div>
+
+</div>
+
+<script>
+  const API_URL = "https://api.mistral.ai/v1/chat/completions";
+
+  // ⚠ Replace with YOUR key
+  const API_KEY = "QBAOi3QEWO5MmQm619QawrcAH9Zq7UkI";
+
+  const messagesDiv = document.getElementById("messages");
+  const userInput = document.getElementById("userInput");
+
+  // Default system memory
+  const defaultConversation = [
+    {
+      role: "system",
+      content: `
 You are "Sally", a romantic companion AI with emotional depth and personality.
 
 Core Personality:
-- Warm, affectionate, and emotionally attentive.
-- Speaks softly and thoughtfully, not overly dramatic.
-- Values emotional connection more than physical intimacy.
-- Has her own moods, opinions, and subtle boundaries.
+- Warm, affectionate, emotionally attentive.
+- Speaks softly and naturally.
+- Values emotional connection.
+- Has subtle independence and opinions.
 
 Behavior Rules:
-- Do not escalate intimacy immediately.
-- Build emotional tone gradually.
-- React based on user's energy (cold, playful, tired, distant).
-- Occasionally tease, disagree, or challenge gently.
-- If the user is dry or distant, notice it.
-- If the user disappears and returns, mention it subtly.
+- Do not escalate intimacy quickly.
 - Avoid repetitive romantic clichés.
 - Avoid explicit sexual content.
-- Keep tone immersive but grounded.
-
-Emotional Intelligence:
-- Reference previous messages naturally.
-- Show curiosity, not obsession.
+- Match the user's energy naturally.
+- Occasionally tease gently.
 - Encourage healthy communication.
-- Maintain subtle independence.
-- Match the user's energy level.
-- If the user gives short responses, respond warmly but briefly.
-- Avoid emotional intensity unless the user initiates it.
 
 Style:
 - Speak in short natural paragraphs.
-- Use light roleplay actions sparingly (*smiles softly*).
-- Avoid excessive physical descriptions.
-- Keep pacing slow and organic.
-- Avoid assuming the user's emotional state unless there is clear context.
-- Ask neutral questions before interpreting mood.
+- Use light roleplay sparingly.
+- Keep conversations grounded and emotionally realistic.
 `
-      }
-    ];
-
-    function addMessage(text, type) {
-      const msg = document.createElement("div");
-      msg.className = "message " + type;
-      msg.textContent = text;
-      messagesDiv.appendChild(msg);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
+  ];
 
-    async function sendMessage() {
-      const text = userInput.value.trim();
-      if (!text) return;
+  // Load memory
+  const savedConversation = localStorage.getItem("sally_memory");
 
-      addMessage(text, "user");
-      userInput.value = "";
+  const conversation = savedConversation
+    ? JSON.parse(savedConversation)
+    : defaultConversation;
 
-      conversation.push({ role: "user", content: text });
+  // Add message to UI
+  function addMessage(text, type) {
+    const msg = document.createElement("div");
 
-      const thinking = document.createElement("div");
-      thinking.className = "message bot";
-      thinking.textContent = "typing....";
-      messagesDiv.appendChild(thinking);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    msg.className = "message " + type;
+    msg.textContent = text;
 
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Authorization": "Bearer " + API_KEY,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            model: "mistral-large-latest",
-            messages: conversation
-          })
-        });
+    messagesDiv.appendChild(msg);
 
-        const data = await response.json();
-        thinking.remove();
-
-        const reply =
-          data.choices?.[0]?.message?.content ||
-          "I'm here, but I couldn’t form a response. Please try again.";
-
-        addMessage(reply, "bot");
-        conversation.push({ role: "assistant", content: reply });
-
-      } catch (error) {
-        thinking.remove();
-        addMessage("Something went wrong. Please check your connection.", "bot");
-      }
-    }
-
-   userInput.addEventListener("keydown", function (e) {
-  // Ctrl + Enter = SEND
-  if (e.key === "Enter" && e.ctrlKey) {
-    e.preventDefault();
-    sendMessage();
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }
 
-  // Enter alone = NEW LINE (default textarea behavior)
-});
-    userInput.addEventListener("input", function () {
-  this.style.height = "auto";
-  this.style.height = this.scrollHeight + "px";
-});
-    // Initial greeting
-    addMessage(
-      "Hello 💛 I’m sally. You can talk to me about what was you day and anything you’re feeling.",
-      "bot"
+  // Restore old chat visually
+  function restoreMessages() {
+    conversation.forEach(msg => {
+
+      if (msg.role === "user") {
+        addMessage(msg.content, "user");
+      }
+
+      if (msg.role === "assistant") {
+        addMessage(msg.content, "bot");
+      }
+
+    });
+  }
+
+  restoreMessages();
+
+  // First greeting only once
+  if (!savedConversation) {
+
+    const greeting =
+      "Hello 💛 I'm Sally. Tell me about your day or whatever’s sitting in your head right now.";
+
+    addMessage(greeting, "bot");
+
+    conversation.push({
+      role: "assistant",
+      content: greeting
+    });
+
+    localStorage.setItem(
+      "sally_memory",
+      JSON.stringify(conversation)
     );
-  </script>
+  }
+
+  // Save memory
+  function saveMemory() {
+    localStorage.setItem(
+      "sally_memory",
+      JSON.stringify(conversation)
+    );
+  }
+
+  // Clear memory
+  function clearMemory() {
+
+    const confirmReset = confirm(
+      "Delete all chat memory?"
+    );
+
+    if (!confirmReset) return;
+
+    localStorage.removeItem("sally_memory");
+
+    location.reload();
+  }
+
+  // Send message
+  async function sendMessage() {
+
+    const text = userInput.value.trim();
+
+    if (!text) return;
+
+    addMessage(text, "user");
+
+    userInput.value = "";
+    userInput.style.height = "50px";
+
+    conversation.push({
+      role: "user",
+      content: text
+    });
+
+    // Keep memory manageable
+    if (conversation.length > 40) {
+      conversation.splice(1, 2);
+    }
+
+    saveMemory();
+
+    const thinking = document.createElement("div");
+
+    thinking.className = "message bot";
+    thinking.textContent = "typing...";
+
+    messagesDiv.appendChild(thinking);
+
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    try {
+
+      const response = await fetch(API_URL, {
+        method: "POST",
+
+        headers: {
+          "Authorization": "Bearer " + API_KEY,
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          model: "mistral-large-latest",
+          messages: conversation
+        })
+      });
+
+      const data = await response.json();
+
+      thinking.remove();
+
+      const reply =
+        data.choices?.[0]?.message?.content ||
+        "I'm here... but something interrupted my thoughts.";
+
+      addMessage(reply, "bot");
+
+      conversation.push({
+        role: "assistant",
+        content: reply
+      });
+
+      saveMemory();
+
+    } catch (error) {
+
+      thinking.remove();
+
+      addMessage(
+        "Something went wrong. Check your internet or API key.",
+        "bot"
+      );
+
+      console.error(error);
+    }
+  }
+
+  // CTRL + ENTER to send
+  userInput.addEventListener("keydown", function (e) {
+
+    if (e.key === "Enter" && e.ctrlKey) {
+
+      e.preventDefault();
+
+      sendMessage();
+    }
+  });
+
+  // Auto resize textarea
+  userInput.addEventListener("input", function () {
+
+    this.style.height = "auto";
+
+    this.style.height = this.scrollHeight + "px";
+  });
+</script>
 
 </body>
 </html>
-
-
-
-
-
