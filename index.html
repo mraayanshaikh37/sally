@@ -1,198 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sally 💛</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sally 💛</title>
 
-  <style>
-    *{
-      box-sizing:border-box;
-    }
+<style>
 
-    body{
-      margin:0;
-      font-family:"Segoe UI",sans-serif;
-      background:#111b21;
-      height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-    }
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
-    .chat-container{
-      width:100%;
-      max-width:420px;
-      height:100vh;
-      background:#0b141a;
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-      position:relative;
-    }
+body{
+  font-family:"Segoe UI",sans-serif;
+  background:#111b21;
+  height:100vh;
+  overflow:hidden;
+}
 
-    /* HEADER */
+/* MAIN CONTAINER */
 
-    .chat-header{
-      height:60px;
-      background:#202c33;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:0 14px;
-      border-bottom:1px solid #2f3b43;
-      color:white;
-    }
+.chat-container{
+  width:100%;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  background:#0b141a;
+}
 
-    .profile{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
+/* HEADER */
 
-    .profile img{
-      width:40px;
-      height:40px;
-      border-radius:50%;
-      object-fit:cover;
-    }
+.chat-header{
+  height:60px;
+  background:#202c33;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 14px;
+  color:white;
+  border-bottom:1px solid #2f3b43;
+}
 
-    .profile-info{
-      display:flex;
-      flex-direction:column;
-    }
+.profile{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
 
-    .profile-info small{
-      color:#8696a0;
-      font-size:12px;
-    }
+.profile img{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  object-fit:cover;
+}
 
-    .reset-btn{
-      background:transparent;
-      border:none;
-      color:#8696a0;
-      cursor:pointer;
-      font-size:13px;
-    }
+.profile-info{
+  display:flex;
+  flex-direction:column;
+}
 
-    .reset-btn:hover{
-      color:white;
-    }
+.profile-info span{
+  font-size:17px;
+}
 
-    /* MESSAGES */
+.profile-info small{
+  color:#8696a0;
+  font-size:12px;
+}
 
-    .messages{
-      flex:1;
-      overflow-y:auto;
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      background:#0b141a;
-      background-image:url("https://i.imgur.com/3QZQZ9P.png");
-      background-size:cover;
-      scroll-behavior:smooth;
-    }
+.reset-btn{
+  border:none;
+  background:none;
+  color:#8696a0;
+  cursor:pointer;
+  font-size:14px;
+}
 
-    .message{
-      max-width:78%;
-      padding:8px 10px;
-      margin-bottom:10px;
-      border-radius:8px;
-      line-height:1.4;
-      font-size:14px;
-      word-wrap:break-word;
-      white-space:pre-wrap;
-      position:relative;
-      animation:fadeIn .2s ease;
-    }
+/* CHAT AREA */
 
-    @keyframes fadeIn{
-      from{
-        opacity:0;
-        transform:translateY(5px);
-      }
-      to{
-        opacity:1;
-        transform:translateY(0);
-      }
-    }
+.messages{
+  flex:1;
+  overflow-y:auto;
+  padding:12px;
 
-    .user{
-      align-self:flex-end;
-      background:#005c4b;
-      color:#e9edef;
-      border-top-right-radius:2px;
-    }
+  display:flex;
+  flex-direction:column;
 
-    .bot{
-      align-self:flex-start;
-      background:#202c33;
-      color:#e9edef;
-      border-top-left-radius:2px;
-    }
+  background:
+  linear-gradient(
+    rgba(11,20,26,0.88),
+    rgba(11,20,26,0.88)
+  ),
 
-    .typing{
-      font-size:20px;
-      opacity:0.7;
-      letter-spacing:2px;
-    }
+  url("https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop");
 
-    .time{
-      display:block;
-      text-align:right;
-      font-size:10px;
-      opacity:0.7;
-      margin-top:4px;
-    }
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
 
-    /* INPUT */
+  scroll-behavior:smooth;
+}
 
-    .input-area{
-      display:flex;
-      align-items:flex-end;
-      gap:8px;
-      padding:10px;
-      background:#202c33;
-    }
+/* MESSAGE COMMON */
 
-    textarea{
-      flex:1;
-      resize:none;
-      border:none;
-      outline:none;
-      border-radius:22px;
-      padding:12px 16px;
-      background:#2a3942;
-      color:white;
-      font-size:14px;
-      min-height:45px;
-      max-height:120px;
-      overflow-y:auto;
-      font-family:inherit;
-    }
+.message{
+  max-width:78%;
+  padding:8px 10px;
+  margin-bottom:10px;
+  border-radius:8px;
+  line-height:1.4;
+  font-size:14px;
+  word-wrap:break-word;
+  white-space:pre-wrap;
+  position:relative;
 
-    .send-btn{
-      width:45px;
-      height:45px;
-      border:none;
-      border-radius:50%;
-      background:#00a884;
-      color:white;
-      font-size:18px;
-      cursor:pointer;
-      transition:0.2s;
-    }
+  animation:fadeIn .15s ease;
+}
 
-    .send-btn:hover{
-      background:#06cf9c;
-    }
+@keyframes fadeIn{
 
-    @media (max-width:600px){
-      .chat-container{
-        max-width:none;
-      }
-    }
-  </style>
+  from{
+    opacity:0;
+    transform:translateY(5px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+}
+
+/* USER MESSAGE */
+
+.user{
+  align-self:flex-end;
+  background:#005c4b;
+  color:#e9edef;
+  border-top-right-radius:2px;
+}
+
+/* BOT MESSAGE */
+
+.bot{
+  align-self:flex-start;
+  background:#202c33;
+  color:#e9edef;
+  border-top-left-radius:2px;
+}
+
+/* TIME */
+
+.time{
+  display:block;
+  text-align:right;
+  font-size:10px;
+  opacity:0.7;
+  margin-top:4px;
+}
+
+/* TYPING */
+
+.typing{
+  font-size:22px;
+  letter-spacing:2px;
+  opacity:0.7;
+}
+
+/* INPUT AREA */
+
+.input-area{
+  background:#202c33;
+  padding:10px;
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+}
+
+textarea{
+  flex:1;
+  border:none;
+  outline:none;
+  resize:none;
+
+  background:#2a3942;
+  color:white;
+
+  border-radius:24px;
+
+  padding:12px 16px;
+
+  font-size:14px;
+  font-family:inherit;
+
+  min-height:45px;
+  max-height:120px;
+
+  overflow-y:auto;
+}
+
+.send-btn{
+  width:46px;
+  height:46px;
+
+  border:none;
+  border-radius:50%;
+
+  background:#00a884;
+  color:white;
+
+  font-size:18px;
+
+  cursor:pointer;
+
+  transition:.2s;
+}
+
+.send-btn:hover{
+  background:#06cf9c;
+}
+
+</style>
 </head>
 
 <body>
@@ -205,7 +235,7 @@
 
     <div class="profile">
 
-      <img src="https://i.imgur.com/Z6XQw5x.png">
+      <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png">
 
       <div class="profile-info">
         <span>Sally 💛</span>
@@ -214,15 +244,21 @@
 
     </div>
 
-    <button class="reset-btn" onclick="clearMemory()">
+    <button
+      class="reset-btn"
+      onclick="clearMemory()"
+    >
       Reset
     </button>
 
   </div>
 
-  <!-- MESSAGES -->
+  <!-- CHAT -->
 
-  <div class="messages" id="messages"></div>
+  <div
+    class="messages"
+    id="messages"
+  ></div>
 
   <!-- INPUT -->
 
@@ -234,7 +270,10 @@
       placeholder="Message Sally..."
     ></textarea>
 
-    <button class="send-btn" onclick="sendMessage()">
+    <button
+      class="send-btn"
+      onclick="sendMessage()"
+    >
       ➤
     </button>
 
@@ -244,358 +283,380 @@
 
 <script>
 
-  // =========================
-  // CONFIG
-  // =========================
+const API_URL =
+"https://api.mistral.ai/v1/chat/completions";
 
-  const API_URL =
-    "https://api.mistral.ai/v1/chat/completions";
+// PUT YOUR API KEY
+const API_KEY =
+"QBAOi3QEWO5MmQm619QawrcAH9Zq7UkI";
 
-  // ⚠ PUT YOUR API KEY HERE
-  const API_KEY =
-    "QBAOi3QEWO5MmQm619QawrcAH9Zq7UkI";
+const messagesDiv =
+document.getElementById("messages");
 
-  const messagesDiv =
-    document.getElementById("messages");
+const userInput =
+document.getElementById("userInput");
 
-  const userInput =
-    document.getElementById("userInput");
+const statusText =
+document.getElementById("statusText");
 
-  const statusText =
-    document.getElementById("statusText");
+/* =========================
+   DEFAULT MEMORY
+========================= */
 
-  // =========================
-  // DEFAULT MEMORY
-  // =========================
+const defaultConversation = [
 
-  const defaultConversation = [
+{
+  role:"system",
 
-    {
-      role:"system",
-
-      content:`
+  content:`
 You are Sally.
 
-You are emotionally warm, calm, natural, and human-like.
+You are emotionally warm,
+natural, calm, supportive,
+and realistic.
 
 Rules:
 - Speak naturally.
-- Avoid sounding robotic.
-- Avoid overly dramatic romance.
-- Be emotionally attentive.
-- Keep responses immersive but realistic.
-- Avoid explicit sexual content.
-- Match the user's tone and energy.
-- Occasionally tease gently.
+- Avoid robotic replies.
 - Keep responses concise.
+- Avoid explicit content.
+- Match user's emotional tone.
+- Be emotionally intelligent.
+- Feel immersive and human.
 `
-    }
+}
 
-  ];
+];
 
-  // =========================
-  // LOAD MEMORY
-  // =========================
+/* =========================
+   LOAD MEMORY
+========================= */
 
-  const savedConversation =
-    localStorage.getItem("sally_memory");
+const savedConversation =
+localStorage.getItem("sally_memory");
 
-  const conversation =
-    savedConversation
-      ? JSON.parse(savedConversation)
-      : defaultConversation;
+const conversation =
+savedConversation
+? JSON.parse(savedConversation)
+: defaultConversation;
 
-  // =========================
-  // TIME FUNCTION
-  // =========================
+/* =========================
+   TIME
+========================= */
 
-  function getTime(){
+function getTime(){
 
-    const now = new Date();
+const now = new Date();
 
-    return now.toLocaleTimeString([],{
-      hour:"2-digit",
-      minute:"2-digit"
-    });
+return now.toLocaleTimeString([],{
+hour:"2-digit",
+minute:"2-digit"
+});
 
-  }
+}
 
-  // =========================
-  // ADD MESSAGE
-  // =========================
+/* =========================
+   ADD MESSAGE
+========================= */
 
-  function addMessage(text,type){
+function addMessage(text,type){
 
-    const msg =
-      document.createElement("div");
+const msg =
+document.createElement("div");
 
-    msg.className =
-      "message " + type;
+msg.className =
+"message " + type;
 
-    msg.innerHTML =
-      `
-      ${text}
-      <span class="time">${getTime()}</span>
-      `;
+msg.innerHTML =
+`
+${text}
+<span class="time">
+${getTime()}
+</span>
+`;
 
-    messagesDiv.appendChild(msg);
+messagesDiv.appendChild(msg);
 
-    messagesDiv.scrollTop =
-      messagesDiv.scrollHeight;
-  }
+messagesDiv.scrollTop =
+messagesDiv.scrollHeight;
 
-  // =========================
-  // RESTORE OLD CHAT
-  // =========================
+}
 
-  function restoreMessages(){
+/* =========================
+   RESTORE MESSAGES
+========================= */
 
-    conversation.forEach(msg => {
+function restoreMessages(){
 
-      if(msg.role === "user"){
+conversation.forEach(msg => {
 
-        addMessage(
-          msg.content,
-          "user"
-        );
+if(msg.role === "user"){
 
-      }
+addMessage(
+msg.content,
+"user"
+);
 
-      if(msg.role === "assistant"){
+}
 
-        addMessage(
-          msg.content,
-          "bot"
-        );
+if(msg.role === "assistant"){
 
-      }
+addMessage(
+msg.content,
+"bot"
+);
 
-    });
+}
 
-  }
+});
 
-  restoreMessages();
+}
 
-  // =========================
-  // FIRST GREETING
-  // =========================
+restoreMessages();
 
-  if(!savedConversation){
+/* =========================
+   FIRST GREETING
+========================= */
 
-    const greeting =
-      "Hey 💛 I’m Sally. Tell me how your day’s been.";
+if(!savedConversation){
 
-    addMessage(greeting,"bot");
+const greeting =
+"Hey 💛 I’m Sally. Tell me how your day’s been.";
 
-    conversation.push({
-      role:"assistant",
-      content:greeting
-    });
+addMessage(
+greeting,
+"bot"
+);
 
-    saveMemory();
+conversation.push({
 
-  }
+role:"assistant",
+content:greeting
 
-  // =========================
-  // SAVE MEMORY
-  // =========================
+});
 
-  function saveMemory(){
+saveMemory();
 
-    localStorage.setItem(
-      "sally_memory",
-      JSON.stringify(conversation)
-    );
+}
 
-  }
+/* =========================
+   SAVE MEMORY
+========================= */
 
-  // =========================
-  // CLEAR MEMORY
-  // =========================
+function saveMemory(){
 
-  function clearMemory(){
+localStorage.setItem(
+"sally_memory",
+JSON.stringify(conversation)
+);
 
-    const confirmReset =
-      confirm(
-        "Delete all messages?"
-      );
+}
 
-    if(!confirmReset) return;
+/* =========================
+   RESET MEMORY
+========================= */
 
-    localStorage.removeItem(
-      "sally_memory"
-    );
+function clearMemory(){
 
-    location.reload();
+const confirmReset =
+confirm(
+"Delete all chat memory?"
+);
 
-  }
+if(!confirmReset) return;
 
-  // =========================
-  // SEND MESSAGE
-  // =========================
+localStorage.removeItem(
+"sally_memory"
+);
 
-  async function sendMessage(){
+location.reload();
 
-    const text =
-      userInput.value.trim();
+}
 
-    if(!text) return;
+/* =========================
+   SEND MESSAGE
+========================= */
 
-    // show user msg
+async function sendMessage(){
 
-    addMessage(text,"user");
+const text =
+userInput.value.trim();
 
-    conversation.push({
-      role:"user",
-      content:text
-    });
+if(!text) return;
 
-    saveMemory();
+/* USER MESSAGE */
 
-    userInput.value = "";
-    userInput.style.height = "45px";
+addMessage(
+text,
+"user"
+);
 
-    // fake typing
+conversation.push({
 
-    statusText.textContent =
-      "typing...";
+role:"user",
+content:text
 
-    const thinking =
-      document.createElement("div");
+});
 
-    thinking.className =
-      "message bot typing";
+saveMemory();
 
-    thinking.innerHTML =
-      "•••";
+userInput.value = "";
 
-    messagesDiv.appendChild(thinking);
+userInput.style.height =
+"45px";
 
-    messagesDiv.scrollTop =
-      messagesDiv.scrollHeight;
+/* TYPING */
 
-    try{
+statusText.textContent =
+"typing...";
 
-      // trim memory
+const thinking =
+document.createElement("div");
 
-      if(conversation.length > 40){
+thinking.className =
+"message bot typing";
 
-        conversation.splice(1,2);
+thinking.innerHTML =
+"•••";
 
-      }
+messagesDiv.appendChild(
+thinking
+);
 
-      const response =
-        await fetch(API_URL,{
+messagesDiv.scrollTop =
+messagesDiv.scrollHeight;
 
-          method:"POST",
+try{
 
-          headers:{
-            "Authorization":
-              "Bearer " + API_KEY,
+/* LIMIT MEMORY */
 
-            "Content-Type":
-              "application/json"
-          },
+if(conversation.length > 40){
 
-          body:JSON.stringify({
+conversation.splice(1,2);
 
-            model:
-              "mistral-large-latest",
+}
 
-            messages:
-              conversation
+const response =
+await fetch(API_URL,{
 
-          })
+method:"POST",
 
-        });
+headers:{
 
-      const data =
-        await response.json();
+"Authorization":
+"Bearer " + API_KEY,
 
-      thinking.remove();
+"Content-Type":
+"application/json"
 
-      statusText.textContent =
-        "online";
+},
 
-      const reply =
-        data.choices?.[0]?.message?.content
-        ||
-        "Something interrupted my thoughts...";
+body:JSON.stringify({
 
-      addMessage(reply,"bot");
+model:
+"mistral-large-latest",
 
-      conversation.push({
-        role:"assistant",
-        content:reply
-      });
+messages:
+conversation
 
-      saveMemory();
+})
 
-    }
+});
 
-    catch(error){
+const data =
+await response.json();
 
-      thinking.remove();
+thinking.remove();
 
-      statusText.textContent =
-        "online";
+statusText.textContent =
+"online";
 
-      addMessage(
-        "Connection issue or invalid API key.",
-        "bot"
-      );
+const reply =
+data.choices?.[0]?.message?.content
+||
+"Something interrupted my thoughts...";
 
-      console.error(error);
+addMessage(
+reply,
+"bot"
+);
 
-    }
+conversation.push({
 
-  }
+role:"assistant",
+content:reply
 
-  // =========================
-  // CTRL + ENTER = SEND
-  // =========================
+});
 
-  userInput.addEventListener(
-    "keydown",
+saveMemory();
 
-    function(e){
+}
 
-      if(
-        e.key === "Enter"
-        &&
-        e.ctrlKey
-      ){
+catch(error){
 
-        e.preventDefault();
+thinking.remove();
 
-        sendMessage();
+statusText.textContent =
+"online";
 
-      }
+addMessage(
+"Connection issue or invalid API key.",
+"bot"
+);
 
-    }
+console.error(error);
 
-  );
+}
 
-  // =========================
-  // AUTO RESIZE TEXTAREA
-  // =========================
+}
 
-  userInput.addEventListener(
-    "input",
+/* =========================
+   CTRL + ENTER
+========================= */
 
-    function(){
+userInput.addEventListener(
 
-      this.style.height =
-        "auto";
+"keydown",
 
-      this.style.height =
-        this.scrollHeight + "px";
+function(e){
 
-    }
+if(
+e.key === "Enter"
+&&
+e.ctrlKey
+){
 
-  );
+e.preventDefault();
+
+sendMessage();
+
+}
+
+}
+
+);
+
+/* =========================
+   AUTO RESIZE
+========================= */
+
+userInput.addEventListener(
+
+"input",
+
+function(){
+
+this.style.height =
+"auto";
+
+this.style.height =
+this.scrollHeight + "px";
+
+}
+
+);
 
 </script>
 
 </body>
-  </html>
+</html>
