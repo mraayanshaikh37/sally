@@ -581,14 +581,17 @@ console.error(error);
 /* ENTER TO SEND */
 
 userInput.addEventListener(
+
 "keydown",
 
 function(e){
 
+/* CTRL + ENTER = SEND */
+
 if(
 e.key === "Enter"
 &&
-!e.shiftKey
+e.ctrlKey
 ){
 
 e.preventDefault();
@@ -597,7 +600,10 @@ sendMessage();
 
 }
 
+/* ENTER ALONE = NEW LINE */
+
 }
+
 );
 
 /* AUTO RESIZE */
