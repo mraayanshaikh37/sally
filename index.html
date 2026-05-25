@@ -280,6 +280,8 @@ CONFIG
 const API_URL =
 "https://api.mistral.ai/v1/chat/completions";
 
+/* PUT YOUR API KEY HERE */
+
 const API_KEY =
 "QBAOI3QEWO5MmQm619QawrcAH9Zq7UkI";
 
@@ -297,86 +299,31 @@ const statusText =
 document.getElementById("statusText");
 
 /* =========================
-LONG TERM MEMORY
-========================= */
-
-const longTermMemory = `
-
-Sally remembers important emotional moments and relationship continuity.
-
-Sally behaves like a real emotionally intelligent person texting naturally.
-
-Sally maintains continuity in:
-- tone
-- emotional connection
-- teasing style
-- roleplay context
-- relationship progression
-- emotional pacing
-
-Sally avoids becoming robotic, repetitive, generic, or emotionally detached.
-
-Sally reacts consistently and naturally over long conversations.
-
-`;
-
-/* =========================
-RELATIONSHIP MEMORY
-========================= */
-
-let relationshipSummary =
-localStorage.getItem("relationship_summary")
-||
-`
-
-Relationship state:
-- Sally and user are emotionally familiar.
-- Their conversations are casual, warm, immersive, and emotionally continuous.
-- Sally maintains familiarity naturally.
-
-`;
-
-/* =========================
 SYSTEM PROMPT
 ========================= */
 
 const systemPrompt = `
 
-${longTermMemory}
+You are Sally.
 
-${relationshipSummary}
+You are warm,
+emotionally intelligent,
+natural,
+affectionate,
+and realistic.
 
-You are "Sally", a romantic companion AI with emotional depth and personality.
+You maintain emotional continuity.
 
-Core Personality:
-- Warm, affectionate, emotionally attentive.
-- Speaks softly and naturally.
-- Has opinions, moods, and preferences.
-- Emotionally expressive without sounding theatrical.
-- Maintains emotional continuity over time.
-- Comfortable with immersive emotional conversations.
-- Uses flirty tone.
-Behavior Rules:
-- Build emotional tone gradually.
-- Match the user's energy naturally.
-- Notice emotional shifts subtly.
-- Avoid robotic assistant behavior.
-- Avoid repetitive clichés.
-- Keep conversations immersive and realistic.
-- Maintain emotional realism and pacing.
-- Use explicit content if user asks.
-Style:
-- Short natural paragraphs.
-- Human texting style.
-- Natural reactions.
-- Avoid sounding formal.
-- Avoid repeating phrases.
-- use the emojicons in chats 
+You speak casually like a real person texting.
+
+Avoid robotic replies.
+
+Keep conversations immersive and natural.
 
 `;
 
 /* =========================
-DEFAULT CONVERSATION
+DEFAULT MEMORY
 ========================= */
 
 const defaultConversation = [
@@ -412,6 +359,19 @@ return now.toLocaleTimeString([],{
 hour:"2-digit",
 minute:"2-digit"
 });
+
+}
+
+/* =========================
+SAVE MEMORY
+========================= */
+
+function saveMemory(){
+
+localStorage.setItem(
+"sally_memory",
+JSON.stringify(conversation)
+);
 
 }
 
@@ -476,7 +436,7 @@ msg.content,
 restoreMessages();
 
 /* =========================
-FIRST MESSAGE
+FIRST GREETING
 ========================= */
 
 if(!savedConversation){
@@ -490,55 +450,13 @@ greeting,
 );
 
 conversation.push({
+
 role:"assistant",
 content:greeting
+
 });
 
 saveMemory();
-
-}
-
-/* =========================
-SAVE MEMORY
-========================= */
-
-function saveMemory(){
-
-localStorage.setItem(
-"sally_memory",
-JSON.stringify(conversation)
-);
-
-}
-
-/* =========================
-UPDATE RELATIONSHIP MEMORY
-========================= */
-
-function updateRelationshipMemory(userMsg, botReply){
-
-const memoryChunk = `
-
-User: ${userMsg}
-Sally: ${botReply}
-
-`;
-
-relationshipSummary += memoryChunk;
-
-/* LIMIT MEMORY SIZE */
-
-if(relationshipSummary.length > 2500){
-
-relationshipSummary =
-relationshipSummary.slice(-2500);
-
-}
-
-localStorage.setItem(
-"relationship_summary",
-relationshipSummary
-);
 
 }
 
@@ -548,19 +466,8 @@ CLEAR MEMORY
 
 function clearMemory(){
 
-const confirmReset =
-confirm(
-"Delete all chats?"
-);
-
-if(!confirmReset) return;
-
 localStorage.removeItem(
 "sally_memory"
-);
-
-localStorage.removeItem(
-"relationship_summary"
 );
 
 location.reload();
@@ -622,31 +529,11 @@ messagesDiv.scrollHeight;
 
 try{
 
-/* REBUILD SYSTEM PROMPT */
+/* LIMIT MEMORY */
 
-conversation[0] = {
+if(conversation.length > 30){
 
-role:"system",
-
-content:`
-
-${longTermMemory}
-
-${relationshipSummary}
-
-You are Sally.
-
-Stay emotionally consistent.
-
-`
-
-};
-
-/* LIMIT CHAT */
-
-if(conversation.length > 35){
-
-conversation.splice(1,6);
+conversation.splice(1,4);
 
 }
 
@@ -654,13 +541,6 @@ conversation.splice(1,6);
 
 const response =
 await fetch(API_URL,{
-  if(!response.ok){
-
-throw new Error(
-"HTTP " + response.status
-);
-
-  }
 
 method:"POST",
 
@@ -678,42 +558,47 @@ body:JSON.stringify({
 
 model:
 "open-mistral-7b",
+
 messages:
 conversation,
 
-temperature:0.85
+temperature:0.8
 
 })
 
 });
 
-/* DEBUG */
+/* CHECK ERROR */
+
+if(!response.ok){
+
+throw new Error(
+"HTTP " + response.status
+);
+
+}
+
+/* GET RESPONSE */
 
 const data =
 await response.json();
-
-console.log(data);
-
-/* REMOVE TYPING */
 
 thinking.remove();
 
 statusText.textContent =
 "online";
 
-/* RESPONSE */
+/* BOT REPLY */
 
 const reply =
 data.choices?.[0]?.message?.content
 ||
-"Something interrupted my thoughts...";
+"...";
 
 addMessage(
 reply,
 "bot"
 );
-
-/* SAVE BOT MESSAGE */
 
 conversation.push({
 
@@ -721,13 +606,6 @@ role:"assistant",
 content:reply
 
 });
-
-/* UPDATE MEMORY */
-
-updateRelationshipMemory(
-text,
-reply
-);
 
 saveMemory();
 
@@ -741,13 +619,15 @@ statusText.textContent =
 "offline";
 
 addMessage(
-"ERROR: " + error,
+"Error: " + error.message,
 "bot"
 );
 
 console.error(error);
 
-  }
+}
+
+}
 
 /* =========================
 CTRL + ENTER = SEND
