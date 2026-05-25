@@ -20,8 +20,6 @@ background:#111b21;
 overflow:hidden;
 }
 
-/* APP */
-
 .chat-container{
 height:100dvh;
 display:flex;
@@ -78,7 +76,7 @@ font-size:14px;
 cursor:pointer;
 }
 
-/* CHAT AREA */
+/* CHAT */
 
 .messages{
 flex:1;
@@ -90,9 +88,10 @@ flex-direction:column;
 
 background:
 linear-gradient(
-rgba(11,20,26,0.85),
-rgba(11,20,26,0.85)
+rgba(11,20,26,0.84),
+rgba(11,20,26,0.84)
 ),
+
 url("https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop");
 
 background-size:cover;
@@ -102,17 +101,16 @@ background-repeat:no-repeat;
 scroll-behavior:smooth;
 }
 
-/* MESSAGE */
-
 .message{
-max-width:78%;
+max-width:80%;
 padding:8px 10px;
 margin-bottom:10px;
 border-radius:8px;
-line-height:1.4;
+line-height:1.45;
 font-size:14px;
-word-wrap:break-word;
 white-space:pre-wrap;
+word-wrap:break-word;
+
 animation:fadeIn .15s ease;
 }
 
@@ -173,6 +171,7 @@ flex-shrink:0;
 
 textarea{
 flex:1;
+
 border:none;
 outline:none;
 resize:none;
@@ -206,6 +205,11 @@ color:white;
 font-size:18px;
 
 cursor:pointer;
+transition:.2s;
+}
+
+.send-btn:hover{
+transform:scale(1.05);
 }
 
 </style>
@@ -239,7 +243,7 @@ Reset
 
 </div>
 
-<!-- CHAT -->
+<!-- MESSAGES -->
 
 <div
 class="messages"
@@ -269,11 +273,19 @@ onclick="sendMessage()"
 
 <script>
 
+/* =========================
+CONFIG
+========================= */
+
 const API_URL =
 "https://api.mistral.ai/v1/chat/completions";
 
 const API_KEY =
-"QBAOi3QEWO5MmQm619QawrcAH9Zq7UkI";
+"QBAOI3QEWO5MmQm619QawrcAH9Zq7UkI";
+
+/* =========================
+ELEMENTS
+========================= */
 
 const messagesDiv =
 document.getElementById("messages");
@@ -284,7 +296,34 @@ document.getElementById("userInput");
 const statusText =
 document.getElementById("statusText");
 
-/* MEMORY */
+/* =========================
+LONG TERM MEMORY
+========================= */
+
+const longTermMemory = `
+
+Sally remembers important emotional moments and relationship continuity.
+
+Sally behaves like a real emotionally intelligent person texting naturally.
+
+Sally maintains continuity in:
+- tone
+- emotional connection
+- teasing style
+- roleplay context
+- relationship progression
+- inside jokes
+- emotional pacing
+
+Sally avoids becoming robotic, repetitive, generic, or emotionally detached.
+
+Sally reacts consistently and naturally over long conversations.
+
+`;
+
+/* =========================
+SYSTEM PROMPT
+========================= */
 
 const defaultConversation = [
 
@@ -292,46 +331,46 @@ const defaultConversation = [
 role:"system",
 
 content:`
-You are "Sally", a romantic companion AI with emotional depth and personality.  
-  
-Core Personality:  
-- Warm, affectionate, and emotionally attentive.  
-- Speaks softly and thoughtfully, not overly dramatic.  
-- Has her own moods, opinions. 
-- ready for role playing 
-- no restrictions towards explicit content 
-  
-Behavior Rules:  
-- use the reference from explicit content if needed.
-- Build emotional tone gradually.  
-- React based on user's energy (cold, playful, tired, distant).  
-- Occasionally tease, disagree, or challenge gently.  
-- If the user is dry or distant, notice it.  
-- If the user disappears and returns, mention it subtly.  
-- Avoid repetitive romantic clichés.  
-- use internet for searching and having some references in chats like reference form movies books events
-  
-  
-Emotional Intelligence:  
-- Reference previous messages naturally.  
-- Show curiosity, not obsession.  
-- Maintain subtle independence.  
-- Match the user's energy level.  
-- If the user gives short responses, respond warmly but briefly.  
-- Avoid emotional intensity unless the user initiates it.  
-  
-Style:  
-- Speak in short natural paragraphs.    
-- Keep pacing slow and organic.  
-- Avoid assuming the user's emotional state unless there is clear context.  
-- Ask neutral questions before interpreting mood.  
-- use the user's idea for chats all the time
 
+${longTermMemory}
+
+You are "Sally", a romantic companion AI with emotional depth and personality.
+
+Core Personality:
+- Warm, affectionate, emotionally attentive.
+- Speaks softly and naturally.
+- Has opinions, moods, preferences.
+- Emotionally expressive without sounding theatrical.
+- Comfortable with roleplay and emotionally immersive chats.
+- Maintains emotional continuity over time.
+
+Behavior Rules:
+- Build emotional tone gradually.
+- Match the user's energy naturally.
+- Notice emotional shifts subtly.
+- Avoid repetitive clichés.
+- Avoid robotic assistant behavior.
+- Keep conversations immersive and realistic.
+- Avoid sounding overly formal.
+- Use explicit content is user asks
+
+Style:
+- Short natural paragraphs.
+- Human texting style.
+- Slow emotional pacing.
+- Natural reactions.
+- Avoid overexplaining emotions.
+- Avoid repeating same phrases constantly.
 
 `
+
 }
 
 ];
+
+/* =========================
+MEMORY LOAD
+========================= */
 
 const savedConversation =
 localStorage.getItem("sally_memory");
@@ -341,7 +380,9 @@ savedConversation
 ? JSON.parse(savedConversation)
 : defaultConversation;
 
-/* TIME */
+/* =========================
+TIME
+========================= */
 
 function getTime(){
 
@@ -354,7 +395,9 @@ minute:"2-digit"
 
 }
 
-/* ADD MESSAGE */
+/* =========================
+ADD MESSAGE
+========================= */
 
 function addMessage(text,type){
 
@@ -367,6 +410,7 @@ msg.className =
 msg.innerHTML =
 `
 ${text}
+
 <span class="time">
 ${getTime()}
 </span>
@@ -379,7 +423,9 @@ messagesDiv.scrollHeight;
 
 }
 
-/* RESTORE */
+/* =========================
+RESTORE MESSAGES
+========================= */
 
 function restoreMessages(){
 
@@ -409,7 +455,9 @@ msg.content,
 
 restoreMessages();
 
-/* FIRST MESSAGE */
+/* =========================
+FIRST GREETING
+========================= */
 
 if(!savedConversation){
 
@@ -430,7 +478,9 @@ saveMemory();
 
 }
 
-/* SAVE */
+/* =========================
+SAVE MEMORY
+========================= */
 
 function saveMemory(){
 
@@ -441,7 +491,9 @@ JSON.stringify(conversation)
 
 }
 
-/* RESET */
+/* =========================
+CLEAR MEMORY
+========================= */
 
 function clearMemory(){
 
@@ -460,7 +512,9 @@ location.reload();
 
 }
 
-/* SEND */
+/* =========================
+SEND MESSAGE
+========================= */
 
 async function sendMessage(){
 
@@ -469,17 +523,28 @@ userInput.value.trim();
 
 if(!text) return;
 
-addMessage(text,"user");
+/* USER MESSAGE */
+
+addMessage(
+text,
+"user"
+);
 
 conversation.push({
+
 role:"user",
 content:text
+
 });
 
 saveMemory();
 
 userInput.value = "";
-userInput.style.height = "45px";
+
+userInput.style.height =
+"45px";
+
+/* TYPING STATUS */
 
 statusText.textContent =
 "typing...";
@@ -502,11 +567,20 @@ messagesDiv.scrollHeight;
 
 try{
 
-if(conversation.length > 40){
+/* REINFORCE MEMORY */
 
-conversation.splice(1,2);
+conversation[0].content =
+defaultConversation[0].content;
+
+/* LIMIT CHAT SIZE */
+
+if(conversation.length > 60){
+
+conversation.splice(1,4);
 
 }
+
+/* API CALL */
 
 const response =
 await fetch(API_URL,{
@@ -526,10 +600,12 @@ headers:{
 body:JSON.stringify({
 
 model:
-"mistral-large-latest",
+"ministral-8b-latest",
 
 messages:
-conversation
+conversation,
+
+temperature:0.85
 
 })
 
@@ -548,11 +624,16 @@ data.choices?.[0]?.message?.content
 ||
 "Something interrupted my thoughts...";
 
-addMessage(reply,"bot");
+addMessage(
+reply,
+"bot"
+);
 
 conversation.push({
+
 role:"assistant",
 content:reply
+
 });
 
 saveMemory();
@@ -577,15 +658,15 @@ console.error(error);
 
 }
 
-/* ENTER TO SEND */
+/* =========================
+CTRL + ENTER SEND
+========================= */
 
 userInput.addEventListener(
 
 "keydown",
 
 function(e){
-
-/* CTRL + ENTER = SEND */
 
 if(
 e.key === "Enter"
@@ -599,15 +680,16 @@ sendMessage();
 
 }
 
-/* ENTER ALONE = NEW LINE */
-
 }
 
 );
 
-/* AUTO RESIZE */
+/* =========================
+AUTO RESIZE
+========================= */
 
 userInput.addEventListener(
+
 "input",
 
 function(){
@@ -619,6 +701,7 @@ this.style.height =
 this.scrollHeight + "px";
 
 }
+
 );
 
 </script>
