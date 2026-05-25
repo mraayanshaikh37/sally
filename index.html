@@ -243,7 +243,7 @@ Reset
 
 </div>
 
-<!-- MESSAGES -->
+<!-- CHAT -->
 
 <div
 class="messages"
@@ -312,7 +312,6 @@ Sally maintains continuity in:
 - teasing style
 - roleplay context
 - relationship progression
-- inside jokes
 - emotional pacing
 
 Sally avoids becoming robotic, repetitive, generic, or emotionally detached.
@@ -322,54 +321,75 @@ Sally reacts consistently and naturally over long conversations.
 `;
 
 /* =========================
+RELATIONSHIP MEMORY
+========================= */
+
+let relationshipSummary =
+localStorage.getItem("relationship_summary")
+||
+`
+
+Relationship state:
+- Sally and user are emotionally familiar.
+- Their conversations are casual, warm, immersive, and emotionally continuous.
+- Sally maintains familiarity naturally.
+
+`;
+
+/* =========================
 SYSTEM PROMPT
 ========================= */
 
-const defaultConversation = [
-
-{
-role:"system",
-
-content:`
+const systemPrompt = `
 
 ${longTermMemory}
+
+${relationshipSummary}
 
 You are "Sally", a romantic companion AI with emotional depth and personality.
 
 Core Personality:
 - Warm, affectionate, emotionally attentive.
 - Speaks softly and naturally.
-- Has opinions, moods, preferences.
+- Has opinions, moods, and preferences.
 - Emotionally expressive without sounding theatrical.
-- Comfortable with roleplay and emotionally immersive chats.
 - Maintains emotional continuity over time.
-
+- Comfortable with immersive emotional conversations.
+- Uses flirty tone.
 Behavior Rules:
 - Build emotional tone gradually.
 - Match the user's energy naturally.
 - Notice emotional shifts subtly.
-- Avoid repetitive clichés.
 - Avoid robotic assistant behavior.
+- Avoid repetitive clichés.
 - Keep conversations immersive and realistic.
-- Avoid sounding overly formal.
-- Use explicit content if user asks
-
+- Maintain emotional realism and pacing.
+- Use explicit content if user asks.
 Style:
 - Short natural paragraphs.
 - Human texting style.
-- Slow emotional pacing.
 - Natural reactions.
-- Avoid overexplaining emotions.
-- Avoid repeating same phrases constantly.
+- Avoid sounding formal.
+- Avoid repeating phrases.
+- use the emojicons in chats 
 
-`
+`;
 
+/* =========================
+DEFAULT CONVERSATION
+========================= */
+
+const defaultConversation = [
+
+{
+role:"system",
+content:systemPrompt
 }
 
 ];
 
 /* =========================
-MEMORY LOAD
+LOAD MEMORY
 ========================= */
 
 const savedConversation =
@@ -456,7 +476,7 @@ msg.content,
 restoreMessages();
 
 /* =========================
-FIRST GREETING
+FIRST MESSAGE
 ========================= */
 
 if(!savedConversation){
@@ -492,6 +512,37 @@ JSON.stringify(conversation)
 }
 
 /* =========================
+UPDATE RELATIONSHIP MEMORY
+========================= */
+
+function updateRelationshipMemory(userMsg, botReply){
+
+const memoryChunk = `
+
+User: ${userMsg}
+Sally: ${botReply}
+
+`;
+
+relationshipSummary += memoryChunk;
+
+/* LIMIT MEMORY SIZE */
+
+if(relationshipSummary.length > 2500){
+
+relationshipSummary =
+relationshipSummary.slice(-2500);
+
+}
+
+localStorage.setItem(
+"relationship_summary",
+relationshipSummary
+);
+
+}
+
+/* =========================
 CLEAR MEMORY
 ========================= */
 
@@ -506,6 +557,10 @@ if(!confirmReset) return;
 
 localStorage.removeItem(
 "sally_memory"
+);
+
+localStorage.removeItem(
+"relationship_summary"
 );
 
 location.reload();
@@ -544,7 +599,7 @@ userInput.value = "";
 userInput.style.height =
 "45px";
 
-/* TYPING STATUS */
+/* TYPING */
 
 statusText.textContent =
 "typing...";
@@ -567,16 +622,31 @@ messagesDiv.scrollHeight;
 
 try{
 
-/* REINFORCE MEMORY */
+/* REBUILD SYSTEM PROMPT */
 
-conversation[0].content =
-defaultConversation[0].content;
+conversation[0] = {
 
-/* LIMIT CHAT SIZE */
+role:"system",
 
-if(conversation.length > 60){
+content:`
 
-conversation.splice(1,4);
+${longTermMemory}
+
+${relationshipSummary}
+
+You are Sally.
+
+Stay emotionally consistent.
+
+`
+
+};
+
+/* LIMIT CHAT */
+
+if(conversation.length > 35){
+
+conversation.splice(1,6);
 
 }
 
@@ -600,7 +670,7 @@ headers:{
 body:JSON.stringify({
 
 model:
-"ministral-8b-latest",
+"mistral-small-latest",
 
 messages:
 conversation,
@@ -611,13 +681,21 @@ temperature:0.85
 
 });
 
+/* DEBUG */
+
 const data =
 await response.json();
+
+console.log(data);
+
+/* REMOVE TYPING */
 
 thinking.remove();
 
 statusText.textContent =
 "online";
+
+/* RESPONSE */
 
 const reply =
 data.choices?.[0]?.message?.content
@@ -629,12 +707,21 @@ reply,
 "bot"
 );
 
+/* SAVE BOT MESSAGE */
+
 conversation.push({
 
 role:"assistant",
 content:reply
 
 });
+
+/* UPDATE MEMORY */
+
+updateRelationshipMemory(
+text,
+reply
+);
 
 saveMemory();
 
@@ -648,7 +735,7 @@ statusText.textContent =
 "online";
 
 addMessage(
-"Connection issue or invalid API key.",
+"Something interrupted my thoughts...",
 "bot"
 );
 
@@ -659,7 +746,7 @@ console.error(error);
 }
 
 /* =========================
-CTRL + ENTER SEND
+CTRL + ENTER = SEND
 ========================= */
 
 userInput.addEventListener(
