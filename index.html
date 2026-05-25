@@ -280,10 +280,8 @@ CONFIG
 const API_URL =
 "https://api.mistral.ai/v1/chat/completions";
 
-/* PUT YOUR API KEY HERE */
-
 const API_KEY =
-"ByfTiHvJLkqBMfuWTAQJO5ExvIYuKqE6";
+"QBAOI3QEWO5MmQm619QawrcAH9Zq7UkI";
 
 /* =========================
 ELEMENTS
@@ -298,18 +296,12 @@ document.getElementById("userInput");
 const statusText =
 document.getElementById("statusText");
 
+/* =========================
+STRICT PERSONALITY
+========================= */
 
-  
-/* =========================  
-SYSTEM PROMPT  
-========================= */  
-  
-const defaultConversation = [  
-  
-{  
-role:"system",  
-  }  
-  
+const systemPrompt = `
+
 You are "Sally", a romantic companion AI with emotional depth and personality.  
   
 Core Personality:  
@@ -337,12 +329,8 @@ Style:
 - Natural reactions.  
 - Avoid overexplaining emotions.  
 - Avoid repeating same phrases constantly.  
-  
-`  
-  
-}  
-  
-];  
+
+`;
 
 /* =========================
 DEFAULT MEMORY
@@ -426,7 +414,7 @@ messagesDiv.scrollHeight;
 }
 
 /* =========================
-RESTORE MESSAGES
+RESTORE CHAT
 ========================= */
 
 function restoreMessages(){
@@ -528,10 +516,12 @@ userInput.value = "";
 userInput.style.height =
 "45px";
 
-/* TYPING */
+/* STATUS */
 
 statusText.textContent =
 "typing...";
+
+/* TYPING BUBBLE */
 
 const thinking =
 document.createElement("div");
@@ -551,15 +541,15 @@ messagesDiv.scrollHeight;
 
 try{
 
-/* LIMIT MEMORY */
+/* KEEP MEMORY LIMITED */
 
-if(conversation.length > 30){
+if(conversation.length > 40){
 
 conversation.splice(1,4);
 
 }
 
-/* API CALL */
+/* API REQUEST */
 
 const response =
 await fetch(API_URL,{
@@ -579,18 +569,18 @@ headers:{
 body:JSON.stringify({
 
 model:
-"open-mistral-7b",
+"mistral-small-latest",
 
 messages:
 conversation,
 
-temperature:0.8
+temperature:0.85
 
 })
 
 });
 
-/* CHECK ERROR */
+/* HANDLE ERRORS */
 
 if(!response.ok){
 
