@@ -654,6 +654,13 @@ conversation.splice(1,6);
 
 const response =
 await fetch(API_URL,{
+  if(!response.ok){
+
+throw new Error(
+"HTTP " + response.status
+);
+
+  }
 
 method:"POST",
 
@@ -670,8 +677,7 @@ headers:{
 body:JSON.stringify({
 
 model:
-"mistral-small-latest",
-
+"open-mistral-7b",
 messages:
 conversation,
 
@@ -732,18 +738,16 @@ catch(error){
 thinking.remove();
 
 statusText.textContent =
-"online";
+"offline";
 
 addMessage(
-"Something interrupted my thoughts...",
+"ERROR: " + error,
 "bot"
 );
 
 console.error(error);
 
-}
-
-}
+  }
 
 /* =========================
 CTRL + ENTER = SEND
