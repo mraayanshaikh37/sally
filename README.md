@@ -130,6 +130,9 @@ Electronics & Telecommunication Engineering Student
 Building practical AI systems, embedded solutions, and software projects through continuous experimentation and learning.
 
 ---
+## 🔗 Live Demo
+👉 [Click here to try it live]
+https://mraayanshaikh37.github.io/sally/
 
 # 📄 License
 
